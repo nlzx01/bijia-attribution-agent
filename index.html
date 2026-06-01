@@ -266,7 +266,6 @@
     <a href="#roadmap">演化路线</a>
     <a href="#phase2">阶段二</a>
     <a href="#compare">对比</a>
-    <a href="#appendix">附录</a>
   </div>
 </nav>
 
@@ -481,8 +480,6 @@
         <thead><tr><th>触发来源</th><th>人工处理内容</th></tr></thead>
         <tbody>
           <tr><td><strong>agent-E-check</strong><div class="human-src">促销校验不通过</div></td><td>人工确认促销金额和类型后继续流转</td></tr>
-          <tr><td><strong>agent-F1-rca-3Level</strong><div class="human-src">归因备注含"人工介入"标记</div></td><td>人工复核归因结果</td></tr>
-          <tr><td><strong>agent-F1-rca-3Level</strong><div class="human-src">归因置信度低（📌 机制待设计）</div></td><td>人工复核归因结果</td></tr>
         </tbody>
       </table>
     </div>
@@ -941,28 +938,6 @@
           <tr><td>运营提效</td><td><span class="c-good">有</span></td><td><span class="c-good">有</span></td></tr>
         </tbody>
       </table>
-    </div>
-  </section>
-
-  <hr class="sdiv">
-
-  <!-- ⑦ 附录 -->
-  <section id="appendix">
-    <div class="section-label">Appendix</div>
-    <h2>附录：待解决问题</h2>
-    <div class="card" style="margin-bottom:16px;">
-      <h3 style="margin-bottom:12px;">问题1：归因置信度机制</h3>
-      <p style="font-size:14px;color:var(--text-secondary);margin-bottom:14px;">agent-F2 执行时需附带置信度标签，低置信度自动转人工复核。阈值定义和判断逻辑待 Skill 设计阶段细化。</p>
-      <div style="display:inline-flex;align-items:center;gap:8px;background:var(--yellow-light);color:var(--yellow);font-size:12px;font-weight:500;padding:6px 12px;border-radius:20px;">⏳ 待在 agent-F2 Skill 设计阶段细化</div>
-    </div>
-    <div class="card">
-      <h3 style="margin-bottom:14px;">Orchestrator 待设计项</h3>
-      <ul class="todo-list">
-        <li><div class="todo-box"></div>状态表的具体存储方式（数据库 / 飞书多维表格 / 其他）</li>
-        <li><div class="todo-box"></div>人工介入的通知机制（消息推送给谁、用什么工具）</li>
-        <li><div class="todo-box"></div>离线优化循环的触发由 Orchestrator 统一管理还是独立运行</li>
-        <li><div class="todo-box"></div>agent-D 在阶段二的改造方案（结构化交互归因替代IM归因）</li>
-      </ul>
     </div>
   </section>
 
