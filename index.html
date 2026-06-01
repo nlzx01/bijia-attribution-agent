@@ -56,7 +56,7 @@
   .swim-steps{display:flex;align-items:center;padding:16px 20px;gap:0;flex-wrap:nowrap;overflow-x:auto;scrollbar-width:none;}
   .swim-steps::-webkit-scrollbar{display:none;}
   .swim-step{display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;border-radius:var(--radius-sm);padding:10px 0;font-size:12.5px;font-weight:500;border:1.5px solid;white-space:nowrap;flex-shrink:0;width:110px;line-height:1.5;position:relative;}
-  .swim-step-wrap{display:flex;flex-direction:column;align-items:center;gap:4px;flex-shrink:0;}
+  .swim-step-wrap{display:flex;flex-direction:column;align-items:center;gap:4px;flex-shrink:0;width:110px;}
   .swim-done-badge{font-size:10px;font-weight:700;color:var(--green);background:#f0fdf4;border:1px solid #bbf7d0;border-radius:4px;padding:1px 7px;white-space:nowrap;}
   .swim-sub-rows{flex:1;display:flex;flex-direction:column;}
   .swim-sub-row{display:flex;align-items:center;padding:12px 20px;gap:0;flex-wrap:nowrap;overflow-x:auto;scrollbar-width:none;}
@@ -335,16 +335,30 @@
             <div class="swim-arrow">→</div>
             <div class="swim-step both"><span class="step-tag">阶段一&amp;二</span>输出<br>归因结果</div>
           </div>
-          <!-- 子行二：数据自动化节点 → 均输入至 F2 -->
-          <div class="swim-sub-row">
-            <div class="swim-sub-label">数据自动化<br>节点</div>
+          <!-- 连接行：↓ 标注在 F1 正下方 -->
+          <div style="display:flex;padding:0 20px;align-items:center;">
+            <div style="flex-shrink:0;width:110px;"></div><!-- 调取 -->
+            <div style="flex-shrink:0;width:28px;"></div><!-- → -->
+            <div style="flex-shrink:0;width:110px;"></div><!-- D -->
+            <div style="flex-shrink:0;width:28px;"></div><!-- → -->
+            <div style="flex-shrink:0;width:110px;"></div><!-- E -->
+            <div style="flex-shrink:0;width:28px;"></div><!-- → -->
+            <div style="flex-shrink:0;width:110px;display:flex;flex-direction:column;align-items:center;gap:1px;padding:4px 0 2px;">
+              <span style="font-size:10px;font-weight:700;color:var(--accent-dark);white-space:nowrap;">数据自动化节点</span>
+              <span style="font-size:16px;color:var(--accent);line-height:1;">↓</span>
+            </div>
+          </div>
+          <!-- 子行二：F2/G/H 对齐 E/F1/输出 -->
+          <div class="swim-sub-row" style="padding-top:0;padding-bottom:14px;">
+            <div style="flex-shrink:0;width:110px;visibility:hidden;"></div><!-- skip 调取 -->
+            <div style="flex-shrink:0;width:28px;visibility:hidden;"></div>
+            <div style="flex-shrink:0;width:110px;visibility:hidden;"></div><!-- skip D -->
+            <div style="flex-shrink:0;width:28px;visibility:hidden;"></div>
             <div class="swim-step p1"><span class="step-tag">阶段一 · agent-F2</span>系统取数<br>分销/露出</div>
             <div class="swim-arrow" style="padding:0 5px;color:var(--text-muted);font-size:13px;">＋</div>
             <div class="swim-step p1"><span class="step-tag">阶段一 · agent-G</span>领用券<br>情况</div>
             <div class="swim-arrow" style="padding:0 5px;color:var(--text-muted);font-size:13px;">＋</div>
             <div class="swim-step p2"><span class="step-tag">阶段二 · agent-H</span>C RoomID<br>抓取</div>
-            <div class="swim-arrow" style="color:var(--accent);font-size:18px;padding:0 6px;">↑</div>
-            <div style="font-size:12px;color:var(--accent-dark);font-weight:600;align-self:center;white-space:nowrap;line-height:1.6;">均输入至<br>agent-F1</div>
           </div>
         </div>
       </div>
@@ -371,17 +385,30 @@
       </div>
       <div class="orch-desc">不执行业务逻辑，按条件规则驱动各 Agent 触发，统一管理人工介入节点。</div>
 
-      <!-- 阶段一触发流程：B ‖ D → E → F2(F1/G) -->
+      <!-- 阶段一触发流程：B → (E ‖ D) → F1(F2/G) -->
       <div class="tf1-flow">
 
-        <!-- 左列：B-ocr（上）并行 D（下） -->
-        <div class="tf1-left">
+        <!-- 左列：B 单独 -->
+        <div style="flex:1;display:flex;flex-direction:column;">
           <div class="tf-card" style="border-color:#94a3b8;background:#f8fafc;">
             <div class="tf-badge-row"><div class="agent-badge badge-b">B</div></div>
             <div class="tf-name">agent-B-ocr</div>
             <div class="tf-desc">OCR识别截图字段<br>（当前输入已结构化，待接入）</div>
           </div>
-          <div class="tf-label">当前暂不接入</div>
+          <div class="tf-label">当前暂未接入</div>
+        </div>
+
+        <div class="tf-flow-arrow">→</div>
+
+        <!-- 中间：E（上）‖ D（下）并行 -->
+        <div class="tf1-left" style="flex:1.3;">
+          <div class="tf-card" style="border-color:#fde68a;">
+            <div class="tf-badge-row"><div class="agent-badge badge-e">E</div></div>
+            <div class="tf-name">agent-E-check</div>
+            <div class="tf-desc">读优惠明细 + 价格字段<br>→ 促销分行表 + 校验结果</div>
+          </div>
+          <div class="tf-label">B完成后触发</div>
+          <div style="text-align:center;"><span class="tf-tag tf-tag-human">⚠️ 含人工节点</span></div>
           <div class="tf1-par-divider">
             <div class="tf1-par-line"></div>
             <span class="tf1-par-text">↕ 并行</span>
@@ -393,19 +420,6 @@
             <div class="tf-desc">读 IM 对话记录<br>→ 创建输出文件</div>
           </div>
           <div class="tf-label">流程开始触发（第一步）</div>
-        </div>
-
-        <div class="tf-flow-arrow">→</div>
-
-        <!-- 中间：E 校验 -->
-        <div class="tf1-mid">
-          <div class="tf-card" style="border-color:#fde68a;">
-            <div class="tf-badge-row"><div class="agent-badge badge-e">E</div></div>
-            <div class="tf-name">agent-E-check</div>
-            <div class="tf-desc">读优惠明细 + 价格字段<br>→ 促销分行表 + 校验结果</div>
-          </div>
-          <div class="tf-label">B完成 + D完成后触发</div>
-          <div style="text-align:center;"><span class="tf-tag tf-tag-human">⚠️ 含人工节点</span></div>
         </div>
 
         <div class="tf-flow-arrow">→</div>
@@ -433,7 +447,7 @@
         </div>
 
       </div>
-      <div class="tf-footnote">B（OCR）当前暂不接入，输入已结构化。D 完成（创建输出文件 + IM归因写入）+ E 校验通过，共同解锁 agent-F1。F2/G 建成后由 F1 自动调取，当前由 Excel 人工提供。</div>
+      <div class="tf-footnote">B（OCR）当前暂未接入，输入已结构化。D 完成（创建输出文件 + IM归因写入）+ E 校验通过，共同解锁 agent-F1。F2/G 建成后由 F1 自动调取，当前由 Excel 人工提供。</div>
     </div>
 
     <!-- Orchestrator 调度逻辑 4模块 -->
