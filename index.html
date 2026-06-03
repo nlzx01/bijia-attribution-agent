@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>比价归因 多Agent架构设计</title>
+<title>比价归因 多Agent结构设计</title>
 <style>
   :root {
     --bg:#faf9f7;--bg-card:#ffffff;--bg-subtle:#f5f4f1;--border:#e8e5df;
@@ -258,7 +258,7 @@
 </head>
 <body>
 <nav>
-  <span class="nav-logo">比价归因 · 多Agent架构</span>
+  <span class="nav-logo">比价归因 · 多Agent结构</span>
   <div class="nav-links">
     <a href="#background">业务流程拆解</a>
     <a href="#phase1">阶段一</a>
@@ -273,8 +273,8 @@
 
   <!-- Hero -->
   <div class="hero">
-    <div class="hero-tag">🏗 架构设计文档</div>
-    <h1>比价归因 多Agent架构设计</h1>
+    <div class="hero-tag">🏗 结构设计文档</div>
+    <h1>比价归因 多Agent结构设计</h1>
     <div class="hero-meta"><span>版本：框架一落地阶段</span><span>2026-05-31</span><span>状态：草稿</span></div>
     <p class="hero-desc">去哪儿比价调研场景，对用户上传的竞品截图进行自动化比价归因。</p>
     <div class="notice">本文档为业务流程框架设计。各Agent节点代表功能职责边界，而非纯AI实现单元。具体实现方式（LLM、规则引擎、系统接口）根据各节点需求决定，只要最终输出结果符合下游节点输入要求即可。</div>
@@ -562,7 +562,7 @@
           <div class="adc-fullname">agent-E-check</div>
           <div class="adc-sub">促销金额核对 + 促销归类校验，输出促销分行表</div>
         </div>
-        <div class="tags"><span class="tag tag-building">🔄 建设中</span><span class="tag tag-human">⚠️ 含人工节点</span></div>
+        <div class="tags"><span class="tag tag-built">✅ 已建</span><span class="tag tag-human">⚠️ 含人工节点</span></div>
       </div>
       <div class="io-flow">
         <div class="io-block input">
@@ -601,7 +601,7 @@
           <div class="status-half cur">
             <div class="status-half-lbl">当前状态</div>
             <ul>
-              <li>Skill 建设中</li>
+              <li>Skill 已建</li>
               <li>C价格字段当前由 Excel 人工提供（agent-B 待建）</li>
             </ul>
           </div>
@@ -625,7 +625,7 @@
           <div class="adc-fullname">agent-F1-rca-3Level</div>
           <div class="adc-sub">综合所有输入字段执行归因 Skill，过程中调取 agent-F2 获取系统字段</div>
         </div>
-        <div class="tags"><span class="tag tag-building">🔄 建设中</span><span class="tag tag-human">⚠️ 含人工复核节点</span></div>
+        <div class="tags"><span class="tag tag-built">✅ 已建</span><span class="tag tag-human">⚠️ 含人工复核节点</span></div>
       </div>
 
       <div class="sub-label">F1 · 归因执行（主流程，过程中调取 F2）</div>
@@ -722,8 +722,8 @@
           <div class="tl-title">落地阶段一核心链路</div>
           <ul class="tl-steps">
             <li>agent-D-rca-IM：IM归因 ✅ 已建</li>
-            <li>agent-E-check：金额/促销校验 🔄 建设中</li>
-            <li>agent-F1-rca-3Level：归因执行 🔄 建设中</li>
+            <li>agent-E-check：金额/促销校验 ✅ 已建</li>
+            <li>agent-F1-rca-3Level：归因执行 ✅ 已建</li>
             <li>Orchestrator：调度 🔄 建设中</li>
             <li>待建字段（F1/G/H功能）暂由 Excel 人工提供</li>
           </ul>
@@ -943,7 +943,7 @@
   </section>
 
   <div style="text-align:center;color:var(--text-muted);font-size:12px;padding-top:32px;border-top:1px solid var(--border);">
-    比价归因 多Agent架构设计 · 框架一落地阶段 · 2026-05-31
+    比价归因 多Agent结构设计 · 框架一落地阶段 · 2026-05-31
   </div>
 
 </div>
