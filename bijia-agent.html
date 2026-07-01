@@ -24,16 +24,18 @@
   body{font-family:-apple-system,BlinkMacSystemFont,'SF Pro Text','Helvetica Neue',Arial,'PingFang SC',sans-serif;background:var(--bg);color:var(--text-primary);line-height:1.7;font-size:15px;min-width:1080px;}
 
   /* Nav */
-  nav{position:sticky;top:0;z-index:100;background:rgba(250,249,247,.94);backdrop-filter:blur(12px);border-bottom:1px solid var(--border);height:var(--nav-h);display:flex;align-items:center;padding:0 48px;}
-  .nav-logo{font-weight:600;font-size:14px;white-space:nowrap;margin-right:32px;flex-shrink:0;}
-  .nav-links{display:flex;gap:4px;overflow-x:auto;scrollbar-width:none;}
+  nav{position:fixed;top:16px;left:50%;transform:translateX(-50%);z-index:100;background:rgba(250,249,247,.96);backdrop-filter:blur(16px);border:1px solid rgba(232,229,223,.9);border-radius:999px;height:48px;display:flex;align-items:center;padding:0 8px 0 20px;box-shadow:0 4px 24px rgba(140,80,30,.09),0 1px 4px rgba(140,80,30,.06);width:max-content;max-width:calc(100vw - 48px);}
+  body::after{content:'';position:fixed;top:0;left:0;right:0;height:120px;background:linear-gradient(to bottom,#faf9f7 55%,transparent 100%);pointer-events:none;z-index:99;}
+  .nav-logo{font-weight:600;font-size:13px;white-space:nowrap;padding-right:16px;margin-right:8px;border-right:1px solid var(--border);flex-shrink:0;}
+  .nav-links{display:flex;gap:2px;overflow-x:auto;scrollbar-width:none;}
   .nav-links::-webkit-scrollbar{display:none;}
-  .nav-links a{font-size:13px;color:var(--text-secondary);text-decoration:none;padding:6px 12px;border-radius:6px;white-space:nowrap;transition:background .15s,color .15s;}
+  .nav-links a{font-size:13px;color:var(--text-secondary);text-decoration:none;padding:6px 12px;border-radius:999px;white-space:nowrap;transition:background .22s cubic-bezier(0.32,0.72,0,1),color .22s cubic-bezier(0.32,0.72,0,1);}
   .nav-links a:hover{background:var(--accent-light);color:var(--accent-dark);}
+  .nav-links a.active{background:var(--accent-light);color:var(--accent-dark);font-weight:600;}
 
   /* Page */
-  .page{max-width:1080px;margin:0 auto;padding:64px 40px 120px;}
-  section{scroll-margin-top:calc(var(--nav-h) + 16px);margin-bottom:72px;}
+  .page{max-width:1080px;margin:0 auto;padding:96px 40px 120px;}
+  section{scroll-margin-top:80px;margin-bottom:72px;}
   .section-label{font-size:11px;font-weight:600;letter-spacing:.4px;color:var(--accent);margin-bottom:12px;display:flex;align-items:center;gap:7px;}
   .section-label::before{content:'';width:14px;height:2px;background:var(--accent);border-radius:1px;flex-shrink:0;}
   h2{font-size:28px;font-weight:700;letter-spacing:-.5px;margin-bottom:8px;line-height:1.25;}
@@ -44,11 +46,23 @@
   .sdiv{border:none;border-top:1px solid var(--border);margin-bottom:64px;}
 
   /* Hero */
-  .hero{padding:72px 0 56px;border-bottom:1px solid var(--border);margin-bottom:64px;}
-  .hero-tag{display:inline-flex;align-items:center;background:var(--accent-light);color:var(--accent-dark);font-size:12px;font-weight:500;padding:4px 12px;border-radius:20px;margin-bottom:20px;}
+  .hero{padding:64px 0 72px;border-bottom:1px solid var(--border);margin-bottom:64px;}
+  .hero-left{}
+  .hero-right{}
+  .hero-tag{display:inline-flex;align-items:center;background:var(--accent-light);color:var(--accent-dark);font-size:11.5px;font-weight:600;padding:4px 12px;border-radius:20px;margin-bottom:20px;border:1px solid rgba(217,119,87,.25);letter-spacing:.3px;}
   .hero h1{font-size:48px;font-weight:700;letter-spacing:-1.2px;line-height:1.13;margin-bottom:16px;}
+  .hero-desc-text{font-size:14.5px;color:var(--text-secondary);line-height:1.75;max-width:480px;}
   .hero-meta{display:flex;gap:24px;color:var(--text-muted);font-size:13px;margin-bottom:24px;}
   .hero-desc{font-size:16px;color:var(--text-secondary);max-width:640px;line-height:1.75;}
+  .hero-stat-card{background:var(--bg-card);border:1px solid var(--border);border-radius:var(--radius);padding:24px;box-shadow:0 2px 12px rgba(140,80,30,.07),0 1px 3px rgba(140,80,30,.05);}
+  .hero-stat{padding:14px 0;}
+  .hero-stat:first-child{padding-top:0;}
+  .hero-stat:last-child{padding-bottom:0;}
+  .hero-stat+.hero-stat{border-top:1px solid var(--border);}
+  .hero-stat-label{font-size:11px;font-weight:600;color:var(--text-muted);letter-spacing:.4px;margin-bottom:5px;}
+  .hero-stat-value{font-size:13.5px;font-weight:500;color:var(--text-primary);line-height:1.4;}
+  .hero-status-ok{display:inline-flex;align-items:center;gap:6px;background:var(--green-light);color:var(--green);font-size:12.5px;font-weight:600;padding:3px 10px;border-radius:6px;}
+  .hero-status-ok::before{content:'';width:6px;height:6px;border-radius:50%;background:var(--green);flex-shrink:0;}
   .notice{margin-top:24px;background:var(--accent-light);border-left:3px solid var(--accent);padding:14px 18px;border-radius:0 var(--radius-sm) var(--radius-sm) 0;font-size:13.5px;color:var(--text-secondary);max-width:720px;}
   code{font-family:'SF Mono','Fira Code',Menlo,monospace;font-size:.82em;background:rgba(37,99,168,.06);border:1px solid rgba(37,99,168,.14);border-radius:4px;padding:1px 5px;color:var(--blue);}
   .footer-bar{display:flex;justify-content:space-between;align-items:center;padding:24px 0 40px;border-top:1px solid var(--border);margin-top:8px;}
@@ -59,7 +73,7 @@
   .swimlane-wrap{background:var(--bg-card);border:1px solid var(--border);border-radius:var(--radius);box-shadow:var(--shadow);overflow:hidden;}
   .swim-row{display:flex;align-items:stretch;border-bottom:1px solid var(--border);}
   .swim-row:last-child{border-bottom:none;}
-  .swim-role{width:88px;flex-shrink:0;display:flex;flex-direction:column;align-items:center;justify-content:center;background:var(--bg-subtle);border-right:1px solid var(--border);font-size:12px;font-weight:600;color:var(--text-muted);letter-spacing:.3px;padding:0 10px;text-align:center;gap:4px;}
+  .swim-role{width:88px;flex-shrink:0;display:flex;flex-direction:column;align-items:center;justify-content:center;background:var(--bg-subtle);border-right:1px solid var(--border);font-size:12px;font-weight:600;color:var(--text-secondary);letter-spacing:.3px;padding:0 10px;text-align:center;gap:4px;}
   .swim-role-sub{font-size:10px;font-weight:500;opacity:.55;line-height:1.3;text-align:center;white-space:normal;}
   .swim-steps{display:flex;align-items:center;padding:24px 20px;gap:0;flex-wrap:nowrap;overflow-x:auto;scrollbar-width:none;}
   .swim-steps::-webkit-scrollbar{display:none;}
@@ -71,14 +85,15 @@
   .swim-step.p2{background:var(--accent-light);border-color:#f4a57a;color:var(--accent-dark);}
   .swim-step.both{background:#f0fdf4;border-color:#86efac;color:#166534;}
   .swim-arrow{padding:0 10px;color:var(--text-muted);font-size:14px;flex-shrink:0;}
-  /* 泳道行颜色 */
-  .swimlane-wrap .swim-row:nth-child(1) .swim-role{background:#f8fafc;border-left:3px solid #94a3b8;}
+  /* 泳道行颜色：用户+业务=中性灰，客服+2运营=统一蓝 */
+  .swimlane-wrap .swim-row:nth-child(1){background:rgba(0,0,0,.01);}
+  .swimlane-wrap .swim-row:nth-child(1) .swim-role{background:var(--bg-subtle);border-left:3px solid #94a3b8;}
   .swimlane-wrap .swim-row:nth-child(2){background:rgba(37,99,168,.03);}
-  .swimlane-wrap .swim-row:nth-child(2) .swim-role{background:rgba(37,99,168,.08);border-left:3px solid var(--blue);}
-  .swimlane-wrap .swim-row:nth-child(3){background:rgba(46,125,82,.03);}
-  .swimlane-wrap .swim-row:nth-child(3) .swim-role{background:rgba(46,125,82,.08);border-left:3px solid var(--green);}
-  .swimlane-wrap .swim-row:nth-child(4){background:rgba(37,99,168,.02);}
-  .swimlane-wrap .swim-row:nth-child(4) .swim-role{background:rgba(37,99,168,.06);border-left:3px solid #93c5fd;}
+  .swimlane-wrap .swim-row:nth-child(2) .swim-role{background:rgba(37,99,168,.07);border-left:3px solid #93c5fd;}
+  .swimlane-wrap .swim-row:nth-child(3){background:rgba(37,99,168,.03);}
+  .swimlane-wrap .swim-row:nth-child(3) .swim-role{background:rgba(37,99,168,.07);border-left:3px solid #93c5fd;}
+  .swimlane-wrap .swim-row:nth-child(4){background:rgba(37,99,168,.03);}
+  .swimlane-wrap .swim-row:nth-child(4) .swim-role{background:rgba(37,99,168,.07);border-left:3px solid #93c5fd;}
   .swimlane-wrap .swim-row:nth-child(5){background:rgba(0,0,0,.01);}
   .swimlane-wrap .swim-row:nth-child(5) .swim-role{background:var(--bg-subtle);border-left:3px solid #94a3b8;}
   .flow-legend{display:flex;gap:20px;margin-top:14px;flex-wrap:wrap;}
@@ -282,9 +297,9 @@
   <span class="nav-logo">比价UPS AI运营</span>
   <div class="nav-links">
     <a href="#background">业务流程拆解</a>
-    <a href="#phase1">已完成Demo</a>
-    <a href="#agents">模块说明</a>
-    <a href="#progress">当前进度</a>
+    <a href="#phase1">本地归因Demo构成</a>
+    <a href="#agents">各模块说明</a>
+    <a href="#progress">下一步计划</a>
   </div>
 </nav>
 
@@ -293,7 +308,6 @@
   <!-- Hero -->
   <div class="hero">
     <h1>比价UPS AI运营</h1>
-    <div class="hero-meta"><span>当前完成：比价线索 AI 归因本地 Demo</span><span>2026-07-02</span><span>状态：本地流程已跑通</span></div>
   </div>
 
   <!-- ① 业务流程拆解 -->
@@ -302,10 +316,9 @@
     <h2>业务流程拆解</h2>
     <p class="section-desc">这里用于拆解整个比价UPS业务链路，并标出后续每个环节可能需要设计的 AI 能力节点。当前已完成的是运营侧“比价线索归因”节点的本地 Demo。</p>
     <div class="flow-legend" style="margin-bottom:12px;">
-      <div class="legend-item"><div class="legend-dot neutral"></div>现有人工流程</div>
-      <div class="legend-item"><div class="legend-dot p1"></div>规划中的 AI 能力节点</div>
-      <div class="legend-item"><div class="legend-dot p2"></div>进行中</div>
       <div class="legend-item"><div class="legend-dot both"></div>当前已完成本地 Demo（QC/QE 已完成，QM 未完成）</div>
+      <div class="legend-item"><div class="legend-dot p2"></div>进行中</div>
+      <div class="legend-item"><div class="legend-dot p1"></div>规划中的 AI 能力节点</div>
     </div>
     <div class="swimlane-wrap">
       <!-- 用户行 -->
@@ -397,7 +410,7 @@
   <!-- ② 当前已完成 Demo -->
   <section id="phase1">
     <div class="section-label">Completed Demo</div>
-    <h2>当前已完成：比价线索 AI 归因本地 Demo</h2>
+    <h2>本地归因Demo构成</h2>
     <p class="section-desc">当前已跑通的是本地归因 Demo：从发起归因请求开始，触发 skill 入口和调度 Agent，再完成比价信息输入、IM 归因、促销校验、归因信息输入与最终归因。</p>
     <div class="banner banner-blue">当前 Demo 仍以 Excel 模拟输入和本地手动触发为主，目的是先验证归因流程、规则拆解和模块协作是否可跑通。</div>
 
@@ -510,7 +523,7 @@
   <!-- ④ 各Agent详情 -->
   <section id="agents">
     <div class="section-label">Module Details</div>
-    <h2>本地 Demo 模块说明</h2>
+    <h2>各模块说明</h2>
     <p class="section-desc">这里说明当前 Demo 中已经跑通的核心模块：skill 入口、调度 Agent、比价信息输入、IM 归因、促销校验、归因信息输入和最终归因。</p>
 
     <!-- agent-D -->
@@ -744,12 +757,12 @@
         <div class="tl-item">
           <div class="tl-dot"></div>
           <div class="tl-phase">下一步 · 从 Demo 到可复用流程</div>
-          <div class="tl-title">先补齐信息自动化，再提升准确性和复用性</div>
+          <div class="tl-title">四个方向推进，部分存在依赖风险</div>
           <ul class="tl-steps">
-            <li>补齐比价信息和归因信息的自动获取能力，减少 Excel 手工维护</li>
-            <li>用真实批次验证归因准确率，定位系统信息缺失导致的误差</li>
-            <li>将人工复核、LLM 兜底和促销校验中的新增规则沉淀回规则库 / 码表</li>
-            <li>推进轻量线上化或可复用交付，降低本地环境依赖</li>
+            <li>线上化部署探索（有风险，当前暂无可实现逻辑）</li>
+            <li>沟通系统数据接入平台系统（有风险，涉及多系统数据打通、溯源、报价排查、聚合与分销）</li>
+            <li>归因 pipeline 打通，基于当前系统能力完成，SKILL 与当前运营流程结合</li>
+            <li>拓展国内 QM 归因</li>
           </ul>
         </div>
       </div>
@@ -834,5 +847,21 @@
   </div>
 
 </div>
+<script>
+  const navLinks = document.querySelectorAll('.nav-links a');
+  const sections = document.querySelectorAll('section[id]');
+
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        navLinks.forEach(l => l.classList.remove('active'));
+        const link = document.querySelector(`.nav-links a[href="#${entry.target.id}"]`);
+        if (link) link.classList.add('active');
+      }
+    });
+  }, { rootMargin: '-15% 0px -70% 0px', threshold: 0 });
+
+  sections.forEach(s => observer.observe(s));
+</script>
 </body>
 </html>
