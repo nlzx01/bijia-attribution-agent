@@ -1,0 +1,838 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>比价UPS AI运营</title>
+<style>
+  :root {
+    --bg:#faf9f7;--bg-card:#ffffff;--bg-subtle:#f5f4f1;--border:#e8e5df;
+    --accent:#d97757;--accent-light:#f5ede8;--accent-dark:#c4623e;
+    --text-primary:#1a1a1a;--text-secondary:#5a5a5a;--text-muted:#9a9a9a;
+    --green:#2e7d52;--green-light:#e8f5ee;
+    --red:#c0392b;--red-light:#fdecea;
+    --blue:#2563a8;--blue-light:#e8f0fb;
+    --yellow:#b45309;--yellow-light:#fef3e2;
+    --purple:#6b21a8;--purple-light:#f3e8ff;
+    --radius:12px;--radius-sm:8px;
+    --shadow:0 1px 3px rgba(140,80,30,.06),0 4px 16px rgba(140,80,30,.04);
+    --nav-h:56px;
+  }
+  *{box-sizing:border-box;margin:0;padding:0;}
+  html{scroll-behavior:smooth;}
+  h1,h2,h3{text-wrap:balance;}
+  body{font-family:-apple-system,BlinkMacSystemFont,'SF Pro Text','Helvetica Neue',Arial,'PingFang SC',sans-serif;background:var(--bg);color:var(--text-primary);line-height:1.7;font-size:15px;min-width:1080px;}
+
+  /* Nav */
+  nav{position:sticky;top:0;z-index:100;background:rgba(250,249,247,.94);backdrop-filter:blur(12px);border-bottom:1px solid var(--border);height:var(--nav-h);display:flex;align-items:center;padding:0 48px;}
+  .nav-logo{font-weight:600;font-size:14px;white-space:nowrap;margin-right:32px;flex-shrink:0;}
+  .nav-links{display:flex;gap:4px;overflow-x:auto;scrollbar-width:none;}
+  .nav-links::-webkit-scrollbar{display:none;}
+  .nav-links a{font-size:13px;color:var(--text-secondary);text-decoration:none;padding:6px 12px;border-radius:6px;white-space:nowrap;transition:background .15s,color .15s;}
+  .nav-links a:hover{background:var(--accent-light);color:var(--accent-dark);}
+
+  /* Page */
+  .page{max-width:1080px;margin:0 auto;padding:64px 40px 120px;}
+  section{scroll-margin-top:calc(var(--nav-h) + 16px);margin-bottom:72px;}
+  .section-label{font-size:11px;font-weight:600;letter-spacing:.4px;color:var(--accent);margin-bottom:12px;display:flex;align-items:center;gap:7px;}
+  .section-label::before{content:'';width:14px;height:2px;background:var(--accent);border-radius:1px;flex-shrink:0;}
+  h2{font-size:28px;font-weight:700;letter-spacing:-.5px;margin-bottom:8px;line-height:1.25;}
+  .section-desc{font-size:14.5px;color:var(--text-secondary);margin-bottom:28px;}
+  h3{font-size:17px;font-weight:600;margin-bottom:14px;}
+  h4{font-size:14px;font-weight:600;margin-bottom:8px;}
+  .card{background:var(--bg-card);border:1px solid var(--border);border-radius:var(--radius);padding:24px;box-shadow:var(--shadow);}
+  .sdiv{border:none;border-top:1px solid var(--border);margin-bottom:64px;}
+
+  /* Hero */
+  .hero{padding:72px 0 56px;border-bottom:1px solid var(--border);margin-bottom:64px;}
+  .hero-tag{display:inline-flex;align-items:center;background:var(--accent-light);color:var(--accent-dark);font-size:12px;font-weight:500;padding:4px 12px;border-radius:20px;margin-bottom:20px;}
+  .hero h1{font-size:48px;font-weight:700;letter-spacing:-1.2px;line-height:1.13;margin-bottom:16px;}
+  .hero-meta{display:flex;gap:24px;color:var(--text-muted);font-size:13px;margin-bottom:24px;}
+  .hero-desc{font-size:16px;color:var(--text-secondary);max-width:640px;line-height:1.75;}
+  .notice{margin-top:24px;background:var(--accent-light);border-left:3px solid var(--accent);padding:14px 18px;border-radius:0 var(--radius-sm) var(--radius-sm) 0;font-size:13.5px;color:var(--text-secondary);max-width:720px;}
+  code{font-family:'SF Mono','Fira Code',Menlo,monospace;font-size:.82em;background:rgba(37,99,168,.06);border:1px solid rgba(37,99,168,.14);border-radius:4px;padding:1px 5px;color:var(--blue);}
+  .footer-bar{display:flex;justify-content:space-between;align-items:center;padding:24px 0 40px;border-top:1px solid var(--border);margin-top:8px;}
+  .footer-left{font-size:13px;font-weight:600;color:var(--text-secondary);}
+  .footer-right{font-size:12px;color:var(--text-muted);text-align:right;line-height:1.7;}
+
+  /* 泳道 */
+  .swimlane-wrap{background:var(--bg-card);border:1px solid var(--border);border-radius:var(--radius);box-shadow:var(--shadow);overflow:hidden;}
+  .swim-row{display:flex;align-items:stretch;border-bottom:1px solid var(--border);}
+  .swim-row:last-child{border-bottom:none;}
+  .swim-role{width:88px;flex-shrink:0;display:flex;flex-direction:column;align-items:center;justify-content:center;background:var(--bg-subtle);border-right:1px solid var(--border);font-size:12px;font-weight:600;color:var(--text-muted);letter-spacing:.3px;padding:0 10px;text-align:center;gap:4px;}
+  .swim-role-sub{font-size:10px;font-weight:500;opacity:.55;line-height:1.3;text-align:center;white-space:normal;}
+  .swim-steps{display:flex;align-items:center;padding:24px 20px;gap:0;flex-wrap:nowrap;overflow-x:auto;scrollbar-width:none;}
+  .swim-steps::-webkit-scrollbar{display:none;}
+  .swim-step{display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;border-radius:var(--radius-sm);padding:6px 8px;font-size:12px;font-weight:500;border:1.5px solid;white-space:nowrap;flex-shrink:0;width:92px;height:52px;line-height:1.4;position:relative;}
+  .swim-step-wrap{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;flex-shrink:0;width:92px;}
+  .swim-done-badge{font-size:9.5px;font-weight:600;color:#166534;background:#dcfce7;border:none;border-radius:10px;padding:2px 8px;white-space:nowrap;}
+  .swim-step.neutral{background:var(--bg-subtle);border-color:var(--border);color:var(--text-secondary);}
+  .swim-step.p1{background:#eff6ff;border-color:#93c5fd;color:#1e3a8a;}
+  .swim-step.p2{background:var(--accent-light);border-color:#f4a57a;color:var(--accent-dark);}
+  .swim-step.both{background:#f0fdf4;border-color:#86efac;color:#166534;}
+  .swim-arrow{padding:0 10px;color:var(--text-muted);font-size:14px;flex-shrink:0;}
+  /* 泳道行颜色 */
+  .swimlane-wrap .swim-row:nth-child(1) .swim-role{background:#f8fafc;border-left:3px solid #94a3b8;}
+  .swimlane-wrap .swim-row:nth-child(2){background:rgba(37,99,168,.03);}
+  .swimlane-wrap .swim-row:nth-child(2) .swim-role{background:rgba(37,99,168,.08);border-left:3px solid var(--blue);}
+  .swimlane-wrap .swim-row:nth-child(3){background:rgba(46,125,82,.03);}
+  .swimlane-wrap .swim-row:nth-child(3) .swim-role{background:rgba(46,125,82,.08);border-left:3px solid var(--green);}
+  .swimlane-wrap .swim-row:nth-child(4){background:rgba(37,99,168,.02);}
+  .swimlane-wrap .swim-row:nth-child(4) .swim-role{background:rgba(37,99,168,.06);border-left:3px solid #93c5fd;}
+  .swimlane-wrap .swim-row:nth-child(5){background:rgba(0,0,0,.01);}
+  .swimlane-wrap .swim-row:nth-child(5) .swim-role{background:var(--bg-subtle);border-left:3px solid #94a3b8;}
+  .flow-legend{display:flex;gap:20px;margin-top:14px;flex-wrap:wrap;}
+  .legend-item{display:flex;align-items:center;gap:7px;font-size:12px;color:var(--text-secondary);}
+  .legend-dot{width:12px;height:12px;border-radius:3px;border:1.5px solid;flex-shrink:0;}
+  .legend-dot.neutral{background:var(--bg-subtle);border-color:var(--border);}
+  .legend-dot.p1{background:#eff6ff;border-color:#93c5fd;}
+  .legend-dot.p2{background:var(--accent-light);border-color:#f4a57a;}
+  .legend-dot.both{background:#f0fdf4;border-color:#86efac;}
+
+  /* Orchestrator 包 */
+  .orch-wrap{border:1px solid rgba(217,119,87,.4);border-radius:var(--radius);background:linear-gradient(135deg,#fffbf8,#fff5f0);padding:20px 20px 24px;margin-bottom:28px;}
+  .orch-header{display:flex;align-items:center;gap:12px;margin-bottom:6px;}
+  .orch-title{font-weight:700;font-size:15px;}
+  .orch-role{font-size:12.5px;color:var(--text-muted);}
+  .orch-desc{font-size:13px;color:var(--text-secondary);margin-bottom:20px;padding-left:46px;}
+
+  /* 阶段一触发流程 */
+  .tf1-flow{display:flex;align-items:center;gap:0;}
+  .tf1-left{display:flex;flex-direction:column;gap:0;flex:1.1;}
+  .tf1-par-divider{display:flex;align-items:center;gap:6px;padding:5px 4px;}
+  .tf1-par-line{flex:1;height:1px;background:#93c5fd;}
+  .tf1-par-text{font-size:11px;color:var(--blue);font-weight:600;white-space:nowrap;}
+  .tf1-mid{flex:1;display:flex;flex-direction:column;align-items:stretch;}
+
+  /* 预留触发流程样式 */
+  .tf2-flow{display:flex;align-items:center;gap:0;}
+  .tf2-paths{display:flex;flex-direction:column;gap:10px;flex:3.5;}
+  .tf2-path{display:flex;align-items:center;gap:0;}
+  .tf2-card{background:var(--bg-card);border:1.5px solid var(--border);border-radius:var(--radius-sm);padding:10px 12px;text-align:center;flex:1;}
+  .tf2-card.new{border-color:#f4a57a;background:var(--accent-light);}
+  .tf2-card.mod{border-color:#c4b5fd;background:#faf5ff;}
+  .tf2-card.pending{border-color:var(--border);background:var(--bg-subtle);opacity:.8;}
+  .tf2-card-name{font-size:12px;font-weight:600;}
+  .tf2-card-desc{font-size:11px;color:var(--text-muted);margin-top:2px;line-height:1.3;}
+  .tf2-path-arrow{padding:0 6px;color:var(--text-muted);font-size:16px;flex-shrink:0;}
+
+  /* 通用 trigger 卡片 */
+  .tf-card{background:var(--bg-card);border:1.5px solid var(--border);border-radius:var(--radius-sm);padding:12px 14px;text-align:center;}
+  .tf-badge-row{display:flex;justify-content:center;margin-bottom:6px;}
+  .tf-name{font-size:12px;font-weight:700;margin-bottom:2px;color:var(--text-primary);}
+  .tf-name-sub{font-size:11px;font-weight:500;color:var(--text-secondary);margin-bottom:3px;}
+  .tf-desc{font-size:11px;color:var(--text-muted);line-height:1.4;}
+  .tf-label{font-size:11px;color:var(--text-muted);margin-top:6px;text-align:center;background:var(--bg-subtle);border:1px solid var(--border);border-radius:4px;padding:3px 8px;}
+  .tf-tag{font-size:10.5px;font-weight:500;padding:2px 7px;border-radius:4px;margin-top:4px;display:inline-block;}
+  .tf-tag-human{background:var(--yellow-light);color:var(--yellow);}
+  .tf-tag-new{background:var(--accent-light);color:var(--accent-dark);}
+  .tf-tag-mod{background:var(--purple-light);color:var(--purple);}
+  .tf-flow-arrow{display:flex;align-items:center;padding:0 10px;color:var(--text-muted);font-size:20px;flex-shrink:0;align-self:center;}
+  .tf-footnote{font-size:12px;color:var(--text-muted);margin-top:10px;padding-left:2px;}
+
+  /* 归因执行容器 */
+  .tf-f2-wrap{border:2px solid #fca5a5;border-radius:var(--radius-sm);padding:10px 10px 12px;background:#fff9f9;flex-shrink:0;min-width:148px;}
+  .tf-f2-label{font-size:11px;font-weight:700;color:#9f1239;text-align:center;margin-bottom:8px;}
+  .tf-f2-box{background:white;border:1.5px solid #fca5a5;border-radius:6px;padding:8px 10px;text-align:center;}
+  .tf-f2-box-name{font-size:12px;font-weight:700;color:#9f1239;}
+  .tf-f2-box-sub{font-size:11px;color:var(--text-muted);margin-top:2px;}
+  .tf-f2-arrow{text-align:center;font-size:13px;color:var(--text-muted);padding:3px 0;}
+
+  /* Agent badges */
+  .agent-badge{display:inline-flex;align-items:center;justify-content:center;width:34px;height:34px;border-radius:9px;font-size:11px;font-weight:700;flex-shrink:0;}
+  .badge-orch{background:var(--accent);color:white;}
+  .badge-d{background:#f3e8ff;color:#6b21a8;}
+  .badge-e{background:#fef9c3;color:#854d0e;}
+  .badge-f1{background:#e0f2fe;color:#075985;}
+  .badge-f2{background:#ffe4e6;color:#9f1239;}
+  .badge-a{background:#f1f5f9;color:#334155;border:1px solid #cbd5e1;}
+  .badge-b{background:#dbeafe;color:#1e40af;}
+  .badge-c{background:#dcfce7;color:#166534;}
+  .badge-g{background:#fef9c3;color:#854d0e;}
+  .badge-h{background:#e0f2fe;color:#075985;}
+  .badge-inter{background:#f0fdf4;color:#166534;border:1px solid #bbf7d0;font-size:10px;}
+
+  .tags{display:flex;flex-wrap:wrap;gap:6px;}
+  .tag{display:inline-flex;align-items:center;font-size:11px;font-weight:500;padding:3px 9px;border-radius:5px;}
+  .tag-built{background:var(--green-light);color:var(--green);}
+  .tag-building{background:var(--blue-light);color:var(--blue);}
+  .tag-planned{background:var(--bg-subtle);color:var(--text-muted);border:1px solid var(--border);}
+  .tag-human{background:var(--yellow-light);color:var(--yellow);}
+  .tag-mod{background:var(--purple-light);color:var(--purple);}
+
+  /* Agent 详情卡 */
+  .agent-detail-card{background:var(--bg-card);border:1px solid var(--border);border-radius:var(--radius);padding:24px;box-shadow:var(--shadow);margin-bottom:14px;}
+  .adc-header{display:flex;align-items:flex-start;gap:12px;margin-bottom:16px;}
+  .adc-title{flex:1;}
+  .adc-name{font-weight:700;font-size:16px;color:var(--text-primary);}
+  .adc-fullname{font-size:12px;color:var(--text-muted);margin-top:2px;font-family:'SF Mono','Fira Code',monospace;}
+  .adc-sub{font-size:12.5px;color:var(--text-secondary);margin-top:3px;}
+
+  /* IO flow */
+  .io-flow{display:flex;align-items:stretch;gap:0;}
+  .io-block{flex:1;border-radius:var(--radius-sm);padding:14px 16px;font-size:13px;}
+  .io-block.input{background:#eff6ff;border:1px solid #bfdbfe;}
+  .io-block.process{background:var(--bg-subtle);border:1px solid var(--border);}
+  .io-block.output{background:#f0fdf4;border:1px solid #bbf7d0;}
+  .io-label{font-size:10.5px;font-weight:700;letter-spacing:1px;text-transform:uppercase;margin-bottom:8px;opacity:.6;}
+  .io-block.input .io-label{color:var(--blue);}
+  .io-block.process .io-label{color:var(--text-muted);}
+  .io-block.output .io-label{color:var(--green);}
+  .io-block ul{padding-left:15px;color:var(--text-secondary);line-height:1.75;}
+  .io-block li{margin-bottom:3px;}
+  .io-arrow{display:flex;align-items:center;padding:0 10px;color:var(--text-muted);font-size:20px;flex-shrink:0;padding-top:30px;}
+  .io-src-cur{color:var(--blue);font-size:11.5px;font-weight:500;}
+  .io-src-plan{color:var(--text-muted);font-size:11px;}
+  .io-note{margin-top:12px;font-size:13px;color:var(--text-secondary);background:var(--yellow-light);border:1px solid #fde68a;border-radius:var(--radius-sm);padding:10px 14px;}
+  .io-note-neutral{margin-top:12px;font-size:13px;color:var(--text-secondary);background:var(--bg-subtle);border:1px solid var(--border);border-radius:var(--radius-sm);padding:10px 14px;}
+  .sub-label{font-size:12px;font-weight:700;letter-spacing:.5px;text-transform:uppercase;color:var(--text-muted);margin:14px 0 8px;}
+
+  /* 当前状态 / 后续优化 */
+  .status-block{margin-top:14px;border:1px solid var(--border);border-radius:var(--radius-sm);overflow:hidden;}
+  .status-row{display:flex;}
+  .status-half{flex:1;padding:14px 16px;font-size:13px;}
+  .status-half.cur{background:#fff9f0;border-right:1px solid var(--border);}
+  .status-half.opt{background:#f0fdf4;}
+  .status-half-lbl{font-size:11px;font-weight:700;letter-spacing:1px;text-transform:uppercase;margin-bottom:8px;}
+  .status-half.cur .status-half-lbl{color:var(--yellow);}
+  .status-half.opt .status-half-lbl{color:var(--green);}
+  .status-half ul{padding-left:15px;color:var(--text-secondary);line-height:1.75;}
+  .status-half li{margin-bottom:3px;}
+
+  /* Orchestrator 4模块 */
+  .orch4-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:28px;}
+  .orch4-card{background:var(--bg-card);border:1px solid var(--border);border-radius:var(--radius);padding:16px 18px;box-shadow:var(--shadow);}
+  .orch4-icon{font-size:20px;margin-bottom:8px;}
+  .orch4-note{font-size:11px;color:var(--text-muted);margin-top:4px;font-style:italic;}
+
+  /* 状态表 */
+  .tbl{width:100%;border-collapse:collapse;font-size:13px;}
+  .tbl th{background:var(--bg-subtle);padding:10px 14px;text-align:left;font-weight:600;font-size:12px;color:var(--text-secondary);border-bottom:1px solid var(--border);}
+  .tbl td{padding:10px 14px;border-bottom:1px solid var(--border);}
+  .tbl tr:last-child td{border-bottom:none;}
+  .s-done{color:var(--green);font-weight:500;}.s-prog{color:var(--accent);font-weight:500;}.s-human{color:var(--yellow);font-weight:500;}.s-wait{color:var(--text-muted);}.s-none{color:var(--border);}
+
+  /* 异常树 */
+  .exc-tree{font-family:'SF Mono','Fira Code',monospace;font-size:13px;background:var(--bg-subtle);border:1px solid var(--border);border-radius:var(--radius-sm);padding:20px 24px;color:var(--text-secondary);line-height:2;}
+  .t-root{color:var(--text-primary);font-weight:600;}.t-green{color:var(--green);}.t-yellow{color:var(--yellow);}.t-red{color:var(--red);}.t-muted{color:var(--text-muted);}
+
+  /* 人工表 */
+  .human-table{width:100%;border-collapse:collapse;font-size:13.5px;}
+  .human-table th{background:var(--bg-subtle);padding:10px 16px;text-align:left;font-size:12px;font-weight:600;color:var(--text-secondary);border-bottom:1px solid var(--border);}
+  .human-table td{padding:12px 16px;border-bottom:1px solid var(--border);vertical-align:top;}
+  .human-table tr:last-child td{border-bottom:none;}
+  .human-src{font-size:11.5px;color:var(--text-muted);margin-top:3px;}
+
+  /* 时间线 */
+  .timeline{position:relative;padding-left:28px;}
+  .timeline::before{content:'';position:absolute;left:9px;top:10px;bottom:10px;width:2px;background:var(--border);}
+  .tl-item{position:relative;margin-bottom:32px;}
+  .tl-item:last-child{margin-bottom:0;}
+  .tl-dot{position:absolute;left:-24px;top:6px;width:12px;height:12px;border-radius:50%;border:2px solid var(--accent);background:white;}
+  .tl-item.current .tl-dot{background:var(--accent);}
+  .tl-phase{font-size:11px;font-weight:600;letter-spacing:1px;text-transform:uppercase;color:var(--accent);margin-bottom:5px;}
+  .tl-title{font-weight:600;font-size:15px;margin-bottom:10px;}
+  .tl-steps{list-style:none;padding:0;}
+  .tl-steps li{font-size:13.5px;color:var(--text-secondary);padding:4px 0 4px 16px;position:relative;}
+  .tl-steps li::before{content:'→';position:absolute;left:0;color:var(--text-muted);}
+
+  /* 待规划 agent 列表 */
+  .pending-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:24px;}
+  .pending-card{background:var(--bg-subtle);border:1px dashed var(--border);border-radius:var(--radius);padding:18px;text-align:center;}
+  .pending-badge-row{display:flex;justify-content:center;margin-bottom:8px;}
+  .pending-name{font-size:13px;font-weight:600;margin-bottom:4px;}
+  .pending-fullname{font-size:11px;color:var(--text-muted);font-family:'SF Mono','Fira Code',monospace;margin-bottom:6px;}
+  .pending-desc{font-size:12.5px;color:var(--text-secondary);}
+  .pending-tag{display:inline-block;font-size:11px;color:var(--text-muted);background:var(--bg-subtle);border:1px solid var(--border);border-radius:4px;padding:2px 8px;margin-top:8px;}
+
+  /* Todo */
+  .todo-list{list-style:none;padding:0;}
+  .todo-list li{display:flex;align-items:flex-start;gap:10px;padding:12px 0;border-bottom:1px solid var(--border);font-size:14px;color:var(--text-secondary);}
+  .todo-list li:last-child{border-bottom:none;}
+  .todo-box{width:18px;height:18px;flex-shrink:0;border:2px solid var(--border);border-radius:4px;margin-top:2px;}
+
+  .banner{padding:12px 18px;border-radius:var(--radius-sm);font-size:13px;margin-bottom:24px;}
+  .banner-blue{background:var(--blue-light);border:1px solid #bfdbfe;color:var(--blue);}
+  .banner-orange{background:var(--accent-light);border:1px solid #fbd5c5;color:var(--accent-dark);}
+
+  /* Demo cases */
+  .case-toggle{background:var(--bg-card);border:1px solid var(--border);border-radius:var(--radius);box-shadow:var(--shadow);overflow:hidden;}
+  .case-toggle summary{list-style:none;cursor:pointer;display:flex;align-items:center;justify-content:space-between;gap:16px;padding:20px 22px;font-weight:700;color:var(--text-primary);}
+  .case-toggle summary::-webkit-details-marker{display:none;}
+  .case-toggle summary::after{content:"+";width:28px;height:28px;border-radius:50%;display:grid;place-items:center;background:var(--bg-subtle);border:1px solid var(--border);color:var(--accent);font-size:20px;line-height:1;}
+  .case-toggle[open] summary::after{content:"-";}
+  .case-summary-title{font-size:20px;line-height:1.3;}
+  .case-summary-hint{font-size:12px;font-weight:600;color:var(--text-muted);margin-left:auto;}
+  .case-panel{border-top:1px solid var(--border);padding:20px 22px 22px;}
+  .case-grid{display:grid;grid-template-columns:repeat(3,1fr);grid-template-rows:repeat(6,auto);column-gap:14px;row-gap:0;align-items:stretch;}
+  .case-card{background:var(--bg-card);border:1px solid var(--border);border-radius:var(--radius);padding:18px;box-shadow:var(--shadow);display:grid;grid-template-rows:subgrid;grid-row:span 6;}
+  .case-type{font-size:11px;font-weight:700;color:var(--accent);letter-spacing:.8px;text-transform:uppercase;margin-bottom:8px;}
+  .case-title{font-size:16px;font-weight:700;line-height:1.35;margin-bottom:12px;}
+  .case-block{border-top:1px solid var(--border);padding-top:10px;margin-top:10px;}
+  .case-label{font-size:11px;font-weight:700;color:var(--text-muted);letter-spacing:.5px;text-transform:uppercase;margin-bottom:4px;}
+  .case-text{font-size:13px;color:var(--text-secondary);line-height:1.65;}
+  .case-result{margin-top:12px;background:#f0fdf4;border:1px solid #bbf7d0;border-radius:var(--radius-sm);padding:10px 12px;color:#166534;font-size:13px;font-weight:600;line-height:1.55;}
+  @supports not (grid-template-rows: subgrid){
+    .case-card{grid-template-rows:auto 54px 122px 154px 132px auto;}
+  }
+</style>
+</head>
+<body>
+<nav>
+  <span class="nav-logo">比价UPS AI运营</span>
+  <div class="nav-links">
+    <a href="#background">业务流程拆解</a>
+    <a href="#phase1">已完成Demo</a>
+    <a href="#agents">模块说明</a>
+    <a href="#progress">当前进度</a>
+  </div>
+</nav>
+
+<div class="page">
+
+  <!-- Hero -->
+  <div class="hero">
+    <h1>比价UPS AI运营</h1>
+    <div class="hero-meta"><span>当前完成：比价线索 AI 归因本地 Demo</span><span>2026-07-02</span><span>状态：本地流程已跑通</span></div>
+  </div>
+
+  <!-- ① 业务流程拆解 -->
+  <section id="background">
+    <div class="section-label">Context</div>
+    <h2>业务流程拆解</h2>
+    <p class="section-desc">这里用于拆解整个比价UPS业务链路，并标出后续每个环节可能需要设计的 AI 能力节点。当前已完成的是运营侧“比价线索归因”节点的本地 Demo。</p>
+    <div class="flow-legend" style="margin-bottom:12px;">
+      <div class="legend-item"><div class="legend-dot neutral"></div>现有人工流程</div>
+      <div class="legend-item"><div class="legend-dot p1"></div>规划中的 AI 能力节点</div>
+      <div class="legend-item"><div class="legend-dot p2"></div>进行中</div>
+      <div class="legend-item"><div class="legend-dot both"></div>当前已完成本地 Demo（QC/QE 已完成，QM 未完成）</div>
+    </div>
+    <div class="swimlane-wrap">
+      <!-- 用户行 -->
+      <div class="swim-row">
+        <div class="swim-role">用户</div>
+        <div class="swim-steps">
+          <div class="swim-step-wrap">
+            <div class="swim-step neutral">填答比价问卷<br>（觉得Q价格贵）</div>
+          </div>
+          <div class="swim-arrow">→</div>
+          <div class="swim-step-wrap">
+            <div class="swim-step neutral">发截图给客服<br>（IM / 问卷上传）</div>
+          </div>
+        </div>
+      </div>
+      <!-- 客服行 -->
+      <div class="swim-row">
+        <div class="swim-role">客服</div>
+        <div class="swim-steps">
+          <div class="swim-step-wrap">
+            <div class="swim-step p1">截图信息识别</div>
+          </div>
+          <div class="swim-arrow">→</div>
+          <div class="swim-step-wrap">
+            <div class="swim-step p1">截图有效性判断</div>
+          </div>
+          <div class="swim-arrow">→</div>
+          <div class="swim-step-wrap">
+            <div class="swim-step p1">比价</div>
+          </div>
+          <div class="swim-arrow">→</div>
+          <div class="swim-step-wrap">
+            <div class="swim-step p1">对客沟通</div>
+          </div>
+          <div class="swim-arrow">→</div>
+          <div class="swim-step-wrap">
+            <div class="swim-step p1">信息记录</div>
+          </div>
+        </div>
+      </div>
+      <!-- 运营行·线索归因 -->
+      <div class="swim-row">
+        <div class="swim-role">运营<span class="swim-role-sub">比价线索归因</span></div>
+        <div class="swim-steps">
+          <div class="swim-step-wrap">
+            <div class="swim-step both">客服&amp;用户沟通<br>场景判定</div>
+          </div>
+          <div class="swim-arrow">→</div>
+          <div class="swim-step-wrap">
+            <div class="swim-step both">竞品&amp;去哪儿<br>促销判断</div>
+          </div>
+          <div class="swim-arrow">→</div>
+          <div class="swim-step-wrap">
+            <div class="swim-step both">三级归因</div>
+          </div>
+        </div>
+      </div>
+      <!-- 运营行·数据分析 -->
+      <div class="swim-row">
+        <div class="swim-role">运营<span class="swim-role-sub">比价数据分析</span></div>
+        <div class="swim-steps">
+          <div class="swim-step-wrap">
+            <div class="swim-step p2">BML<br>数据分析</div>
+          </div>
+          <div class="swim-arrow" style="padding:0 8px;color:var(--border);">｜</div>
+          <div class="swim-step-wrap">
+            <div class="swim-step p1">归因<br>数据分析</div>
+          </div>
+          <div class="swim-arrow" style="padding:0 8px;color:var(--border);">｜</div>
+          <div class="swim-step-wrap">
+            <div class="swim-step p1">促销<br>数据分析</div>
+          </div>
+        </div>
+      </div>
+      <!-- 业务行 -->
+      <div class="swim-row">
+        <div class="swim-role">业务</div>
+        <div class="swim-steps">
+          <div class="swim-step-wrap">
+            <div class="swim-step neutral">产品力改善</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <hr class="sdiv">
+
+  <!-- ② 当前已完成 Demo -->
+  <section id="phase1">
+    <div class="section-label">Completed Demo</div>
+    <h2>当前已完成：比价线索 AI 归因本地 Demo</h2>
+    <p class="section-desc">当前已跑通的是本地归因 Demo：从发起归因请求开始，触发 skill 入口和调度 Agent，再完成比价信息输入、IM 归因、促销校验、归因信息输入与最终归因。</p>
+    <div class="banner banner-blue">当前 Demo 仍以 Excel 模拟输入和本地手动触发为主，目的是先验证归因流程、规则拆解和模块协作是否可跑通。</div>
+
+    <div class="orch-wrap">
+      <div class="orch-header">
+        <div class="agent-badge badge-orch">核心</div>
+        <div>
+          <div class="orch-title">本地 Demo 主链路</div>
+          <div class="orch-role">请求入口 · skill 触发 · 调度 Agent · 归因执行</div>
+        </div>
+      </div>
+      <div class="tf-footnote" style="margin-bottom:18px;">完整 Demo 流程：请求归因 → 触发 skill 入口 → 触发调度 Agent → 比价信息输入 → IM归因 + 促销校验（含LLM兜底） → 归因信息输入 → 进行归因 → 完成归因。</div>
+
+      <div class="tf1-flow">
+        <div style="flex:1;display:flex;flex-direction:column;">
+          <div class="tf-card" style="border-color:#94a3b8;background:#f8fafc;">
+            <div class="tf-badge-row"><div class="agent-badge badge-b">请求</div></div>
+            <div class="tf-name">请求归因</div>
+            <div class="tf-desc">运营发起一次<br>比价线索归因任务</div>
+          </div>
+          <div class="tf-label">当前手动触发</div>
+        </div>
+
+        <div class="tf-flow-arrow">→</div>
+
+        <div style="flex:1;display:flex;flex-direction:column;">
+          <div class="tf-card">
+            <div class="tf-badge-row"><div class="agent-badge badge-d">Skill</div></div>
+            <div class="tf-name">触发 skill 入口</div>
+            <div class="tf-desc">进入本地比价归因<br>执行入口</div>
+          </div>
+          <div class="tf-label">本地入口</div>
+        </div>
+
+        <div class="tf-flow-arrow">→</div>
+
+        <div style="flex:1;display:flex;flex-direction:column;">
+          <div class="tf-card" style="border-color:#f4a57a;background:var(--accent-light);">
+            <div class="tf-badge-row"><div class="agent-badge badge-orch">调度</div></div>
+            <div class="tf-name">触发调度 Agent</div>
+            <div class="tf-desc">编排后续模块<br>记录执行状态</div>
+          </div>
+          <div class="tf-label">Orchestrator</div>
+        </div>
+      </div>
+
+      <div class="tf1-par-divider" style="margin:18px 0;">
+        <div class="tf1-par-line"></div>
+        <span class="tf1-par-text">进入归因处理链路</span>
+        <div class="tf1-par-line"></div>
+      </div>
+
+      <div class="tf1-flow">
+        <div style="flex:1;display:flex;flex-direction:column;">
+          <div class="tf-card" style="border-color:#94a3b8;background:#f8fafc;">
+            <div class="tf-badge-row"><div class="agent-badge badge-b">输入</div></div>
+            <div class="tf-name">比价信息输入</div>
+            <div class="tf-desc">客服记录 / 截图识别 / 价格促销<br>当前由 Excel 模拟输入</div>
+          </div>
+          <div class="tf-label">信息获取尚未自动化</div>
+        </div>
+
+        <div class="tf-flow-arrow">→</div>
+
+        <div class="tf1-left" style="flex:1.2;">
+          <div class="tf-card">
+            <div class="tf-badge-row"><div class="agent-badge badge-d">IM</div></div>
+            <div class="tf-name">触发 IM 归因</div>
+            <div class="tf-desc">根据沟通记录识别<br>用户认为贵的原因</div>
+          </div>
+          <div class="tf1-par-divider">
+            <div class="tf1-par-line"></div>
+            <span class="tf1-par-text">并行</span>
+            <div class="tf1-par-line"></div>
+          </div>
+          <div class="tf-card" style="border-color:#fde68a;">
+            <div class="tf-badge-row"><div class="agent-badge badge-e">促销</div></div>
+            <div class="tf-name">触发促销校验</div>
+            <div class="tf-desc">金额 / 促销归类校验<br>含 LLM 兜底修正信息错误</div>
+          </div>
+        </div>
+
+        <div class="tf-flow-arrow">→</div>
+
+        <div style="flex:1;display:flex;flex-direction:column;">
+          <div class="tf-card" style="border-color:#f4a57a;background:var(--accent-light);">
+            <div class="tf-badge-row"><div class="agent-badge badge-f1">系统</div></div>
+            <div class="tf-name">归因信息输入</div>
+            <div class="tf-desc">分销 / 露出 / 领券 / RoomID<br>当前由 Excel 模拟输入</div>
+          </div>
+          <div class="tf-label">后续需从系统获取</div>
+        </div>
+
+        <div class="tf-flow-arrow">→</div>
+
+        <div style="flex:1;display:flex;flex-direction:column;">
+          <div class="tf-card" style="border-color:#86efac;background:#f0fdf4;">
+            <div class="tf-badge-row"><div class="agent-badge badge-f1">归因</div></div>
+            <div class="tf-name">进行归因</div>
+            <div class="tf-desc">综合比价信息、IM结果<br>促销校验与系统信息</div>
+          </div>
+          <div class="tf-label">完成归因</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <hr class="sdiv">
+
+  <!-- ④ 各Agent详情 -->
+  <section id="agents">
+    <div class="section-label">Module Details</div>
+    <h2>本地 Demo 模块说明</h2>
+    <p class="section-desc">这里说明当前 Demo 中已经跑通的核心模块：skill 入口、调度 Agent、比价信息输入、IM 归因、促销校验、归因信息输入和最终归因。</p>
+
+    <!-- agent-D -->
+    <div class="agent-detail-card" style="border-left:3px solid #c4b5fd;">
+      <div class="adc-header">
+        <div class="agent-badge badge-d">D</div>
+        <div class="adc-title">
+          <div class="adc-name">IM 归因</div>
+          <div class="adc-fullname">agent-D-rca-IM</div>
+          <div class="adc-sub">IM对话归因，识别用户认为贵的原因</div>
+        </div>
+        <div class="tags"><span class="tag tag-built">✅ 已建</span></div>
+      </div>
+      <div class="io-flow">
+        <div class="io-block input">
+          <div class="io-label">Input</div>
+          <ul>
+            <li><span class="io-src-cur">case编号</span> <span class="io-src-plan">· Excel原始数据</span></li>
+            <li><span class="io-src-cur">客服与用户沟通记录</span> <span class="io-src-plan">· Excel原始数据</span></li>
+            <li><span class="io-src-cur">客服判断结果</span> <span class="io-src-plan">· Excel原始数据</span></li>
+            <li style="color:var(--text-muted);font-size:12px;">（按需）工单号</li>
+          </ul>
+        </div>
+        <div class="io-arrow">→</div>
+        <div class="io-block process">
+          <div class="io-label">Process</div>
+          <ul>
+            <li>创建输出文件（复制原始数据到Sheet1）</li>
+            <li>批量分析 IM 对话，归因用户认为贵的原因</li>
+          </ul>
+        </div>
+        <div class="io-arrow">→</div>
+        <div class="io-block output">
+          <div class="io-label">Output</div>
+          <ul>
+            <li>创建：主数据文件（复制原始数据并追加归因字段）</li>
+            <li>Sheet1 追加：<code>im-归因结果-AI</code></li>
+            <li>Sheet1 追加：<code>im-归因说明-AI</code></li>
+          </ul>
+        </div>
+      </div>
+      <div class="status-block">
+        <div class="status-row">
+          <div class="status-half cur">
+            <div class="status-half-lbl">当前状态</div>
+            <ul>
+              <li>本地 IM 归因模块已建，读取 Excel 原始数据</li>
+              <li>输出结果写入主数据文件 Sheet1</li>
+            </ul>
+          </div>
+          <div class="status-half opt">
+            <div class="status-half-lbl">后续优化点</div>
+            <ul>
+              <li>持续补充 IM 归因样本，提升标签稳定性</li>
+              <li>把人工复核后的新规则回流到 IM 归因逻辑</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 促销校验 -->
+    <div class="agent-detail-card" style="border-left:3px solid #fde68a;">
+      <div class="adc-header">
+        <div class="agent-badge badge-e">E</div>
+        <div class="adc-title">
+          <div class="adc-name">金额校验 / 促销校验</div>
+          <div class="adc-fullname">validate.py</div>
+          <div class="adc-sub">促销金额核对 + 促销归类校验；遇到前期信息错误或促销无法匹配时，用 LLM 作为兜底补充</div>
+        </div>
+        <div class="tags"><span class="tag tag-built">✅ 已建</span><span class="tag tag-human">⚠️ 含人工节点</span></div>
+      </div>
+      <div class="io-flow">
+        <div class="io-block input">
+          <div class="io-label">Input</div>
+          <ul>
+            <li><span class="io-src-cur">case编号</span> <span class="io-src-plan">· 输出文件Sheet1</span></li>
+            <li><span class="io-src-cur">Q优惠明细 / C优惠明细</span> <span class="io-src-plan">· 输出文件Sheet1（原始数据）</span></li>
+            <li><span class="io-src-cur">Q划线价 / Q支付价</span> <span class="io-src-plan">· 输出文件Sheet1（原始数据）</span></li>
+            <li><span class="io-src-cur">C划线价 / C支付价</span> <span class="io-src-plan">· 输出文件Sheet1（当前 Excel 提供，后续可自动化）</span></li>
+            <li style="color:var(--text-muted);font-size:12px;">内置文件：促销码表Q.xlsx / 促销码表C.xlsx</li>
+          </ul>
+        </div>
+        <div class="io-arrow">→</div>
+        <div class="io-block process">
+          <div class="io-label">Process</div>
+          <ul>
+            <li>促销类型识别：对照促销码表，原始文本 → 标准分类（1/2/3级 + 是否十亿补贴）</li>
+            <li>金额校验（V1）：Q/C促销金额计算是否正确</li>
+            <li>促销归类校验（V2）：Q/C促销项是否完整对应</li>
+            <li>前期信息错误或促销无法匹配时，通过 LLM 兜底辅助识别</li>
+          </ul>
+        </div>
+        <div class="io-arrow">→</div>
+        <div class="io-block output">
+          <div class="io-label">Output</div>
+          <ul>
+            <li>生成：促销数据文件（Q促销分行表 / 竞品促销分行表）</li>
+            <li>生成：<code>case_audit</code> 校验记录</li>
+            <li>促销校验结果供后续归因使用</li>
+          </ul>
+        </div>
+      </div>
+      <div class="status-block">
+        <div class="status-row">
+          <div class="status-half cur">
+            <div class="status-half-lbl">当前状态</div>
+            <ul>
+              <li>促销校验脚本已建，当前本地流程可执行</li>
+              <li>C价格字段当前由 Excel 人工提供</li>
+            </ul>
+          </div>
+          <div class="status-half opt">
+            <div class="status-half-lbl">后续优化点</div>
+            <ul>
+              <li>把兜底成功案例沉淀进码表，降低后续重复识别成本</li>
+              <li>继续细化校验异常分类，减少人工复核成本</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 归因执行 -->
+    <div class="agent-detail-card" style="border-left:3px solid #fca5a5;">
+      <div class="adc-header">
+        <div class="agent-badge badge-f1">归因</div>
+        <div class="adc-title">
+          <div class="adc-name">归因执行</div>
+          <div class="adc-fullname">attribute.py</div>
+          <div class="adc-sub">综合比价信息、IM 归因、促销校验和归因信息输入，输出最终归因结果</div>
+        </div>
+        <div class="tags"><span class="tag tag-built">✅ 已建</span><span class="tag tag-human">⚠️ 含人工复核节点</span></div>
+      </div>
+
+      <div class="sub-label">归因执行 · 主流程</div>
+      <div class="io-flow">
+        <div class="io-block input">
+          <div class="io-label">Input · 字段及来源</div>
+          <ul>
+            <li><span class="io-src-cur">比价信息输入</span> <span class="io-src-plan">· 当前由 Excel 模拟输入</span></li>
+            <li><span class="io-src-cur">IM 归因结果</span> <span class="io-src-plan">· 来自 IM 归因模块</span></li>
+            <li><span class="io-src-cur">促销校验结果</span> <span class="io-src-plan">· 来自促销校验模块</span></li>
+            <li><span class="io-src-cur" style="color:var(--yellow);">归因信息输入</span> <span class="io-src-plan">· 分销 / 露出 / 领券 / RoomID 等，当前由 Excel 模拟输入</span></li>
+          </ul>
+        </div>
+        <div class="io-arrow">→</div>
+        <div class="io-block process">
+          <div class="io-label">Process</div>
+          <ul>
+            <li>融合比价信息、IM 归因结果、促销校验结果和系统归因信息</li>
+            <li>按照显式化规则完成归因判断</li>
+            <li>对系统信息缺失或冲突的 case 保留人工复核空间</li>
+          </ul>
+        </div>
+        <div class="io-arrow">→</div>
+        <div class="io-block output">
+          <div class="io-label">Output</div>
+          <ul>
+            <li>输出最终归因结果</li>
+            <li>标记需要人工复核的异常 case</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="io-note-neutral" style="margin-top:12px;">
+        <strong>归因信息输入：</strong>
+        <code>是否分销</code> / <code>是否露出</code> / <code>领用券情况</code> / <code>C RoomID</code> 等字段当前由 Excel 模拟输入，后续需要从系统中获取。
+      </div>
+      <div class="io-note">
+        <strong>当前影响：</strong>部分系统信息尚未获取，会导致一部分归因结果不准确或需要人工复核。
+      </div>
+
+      <div class="status-block">
+        <div class="status-row">
+          <div class="status-half cur">
+            <div class="status-half-lbl">当前状态（字段由Excel提供）</div>
+            <ul>
+              <li>C支付价/划线价/截图平台 → Excel 提供</li>
+              <li>C RoomID → Excel 提供</li>
+              <li>领用券情况 → Excel 提供</li>
+              <li>是否分销/露出 → Excel 提供</li>
+            </ul>
+          </div>
+          <div class="status-half opt">
+            <div class="status-half-lbl">后续优化点</div>
+            <ul>
+              <li>把 C 侧价格、截图平台等字段从人工 Excel 转为自动识别或系统供数</li>
+              <li>接入分销/露出、领用券、C RoomID 等系统字段</li>
+              <li>用人工复核结果继续补齐归因规则与促销码表</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </section>
+
+  <hr class="sdiv">
+
+  <!-- ④ 当前进度 -->
+  <section id="progress">
+    <div class="section-label">Progress</div>
+    <h2>当前进度与下一步</h2>
+    <p class="section-desc">当前阶段的价值是先证明“比价线索 AI 归因”这条链路能跑通；下一步再从信息获取、准确性和部署复用三个方向补齐。</p>
+    <div class="card">
+      <div class="timeline">
+        <div class="tl-item current">
+          <div class="tl-dot"></div>
+          <div class="tl-phase">已完成 · 本地 Demo 跑通</div>
+          <div class="tl-title">从请求归因到完成归因的本地链路已打通</div>
+          <ul class="tl-steps">
+            <li>已具备 skill 入口，可以触发本地归因流程</li>
+            <li>调度 Agent 已能编排 IM 归因、促销校验和归因执行</li>
+            <li>IM 归因和促销校验已能批量处理比价信息</li>
+            <li>促销校验中已包含 LLM 兜底，用于处理前期信息错误或促销无法匹配的情况</li>
+            <li>归因执行已能综合比价信息、IM 结果、促销校验和归因信息输入，输出归因结果</li>
+          </ul>
+        </div>
+        <div class="tl-item">
+          <div class="tl-dot"></div>
+          <div class="tl-phase">当前限制 · 可用但还不是可复用系统</div>
+          <div class="tl-title">信息获取和部署方式仍是主要短板</div>
+          <ul class="tl-steps">
+            <li>整体信息获取自动化流程未完成，当前仍依赖 Excel 输入和手动触发开始</li>
+            <li>部分系统信息尚未自动获取，当前通过 Excel 模拟输入，可能导致部分归因不准确</li>
+            <li>本地流程尚未线上化部署，复用难度高</li>
+            <li>复杂异常仍需要人工复核，规则和促销码表需要持续沉淀</li>
+          </ul>
+        </div>
+        <div class="tl-item">
+          <div class="tl-dot"></div>
+          <div class="tl-phase">下一步 · 从 Demo 到可复用流程</div>
+          <div class="tl-title">先补齐信息自动化，再提升准确性和复用性</div>
+          <ul class="tl-steps">
+            <li>补齐比价信息和归因信息的自动获取能力，减少 Excel 手工维护</li>
+            <li>用真实批次验证归因准确率，定位系统信息缺失导致的误差</li>
+            <li>将人工复核、LLM 兜底和促销校验中的新增规则沉淀回规则库 / 码表</li>
+            <li>推进轻量线上化或可复用交付，降低本地环境依赖</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <hr class="sdiv">
+
+  <!-- ⑤ Demo Case -->
+  <section>
+    <div class="section-label">Demo Cases</div>
+    <details class="case-toggle">
+      <summary>
+        <span class="case-summary-title">AI归因case示例</span>
+        <span class="case-summary-hint">点击可查看</span>
+      </summary>
+      <div class="case-panel">
+        <p class="section-desc">以下案例来自本地 Demo 归因样例，用于展示 AI 不是直接贴标签，而是从用户交互、促销信息和系统归因信息中逐步判断最终原因。</p>
+
+        <div class="case-grid">
+          <div class="case-card" style="border-left:3px solid #fbbf24;">
+            <div class="case-type" style="color:var(--yellow);">Case 1 · 用户误解</div>
+            <div class="case-title">用户把“免费升房权益”纳入价格感知</div>
+            <div class="case-block">
+              <div class="case-label">输入 · 原始沟通</div>
+              <div class="case-text">用户原声：“还可以免费升房”“同等价格可以免费升级，不能升级的还便宜”。客服核实：去哪儿到手价 125 元，同程到手价 134 元。</div>
+            </div>
+            <div class="case-block">
+              <div class="case-label">Agent 判断</div>
+              <div class="case-text">IM 归因先识别客服判断为“价格不 lose”，再从对话里抽取“免费升房/免费升级”这类权益关注点，命中用户误解中的免费权益场景。</div>
+            </div>
+            <div class="case-block">
+              <div class="case-label">输出</div>
+              <div class="case-text">不是价格或促销导致的 lose，而是用户把免费升级权益纳入价格比较，最终进入用户误解分支。</div>
+            </div>
+            <div class="case-result">最终归因：用户误解 / 免费类权益lose</div>
+          </div>
+
+          <div class="case-card" style="border-left:3px solid #93c5fd;">
+            <div class="case-type" style="color:var(--blue);">Case 2 · 促销 lose</div>
+            <div class="case-title">竞品平台补贴更强，导致到手价低</div>
+            <div class="case-block">
+              <div class="case-label">输入 · 比价信息</div>
+              <div class="case-text">客服判断为“可对比，lose，同质化 lose”。同程划线价/到手价为 459/421；去哪儿同质化房型划线价/到手价为 459/432。竞品促销包含订房享好价、门店新客、红包立减；去哪儿促销为出行特惠、房费立减。</div>
+            </div>
+            <div class="case-block">
+              <div class="case-label">Agent 判断</div>
+              <div class="case-text">同程归因规则先判断划线价一致：|459 - 459| ≤ 0.1，所以不进入“划线价不一致”分支，继续比较促销分桶。Q 侧商促 23 元、平台促销 4 元；E 侧商促 16 元、普通平台券 22 元。</div>
+            </div>
+            <div class="case-block">
+              <div class="case-label">输出</div>
+              <div class="case-text">商促桶 E 比 Q 少 7 元，不命中商家补贴；平台补贴桶 E 比 Q 多 18 元，抵消商促差异后形成到手价差。四级继续看平台补贴构成：E 普通平台券 22 元，Q 侧平券 0 元，命中“平券lose”。</div>
+            </div>
+            <div class="case-result">最终归因：价格lose / 促销lose / 平台补贴lose / 平券lose</div>
+          </div>
+
+          <div class="case-card" style="border-left:3px solid #f4a57a;">
+            <div class="case-type">Case 3 · 划线价不一致</div>
+            <div class="case-title">当前只能判断不是同一套货，三级原因待系统数据区分</div>
+            <div class="case-block">
+              <div class="case-label">输入 · 比价信息</div>
+              <div class="case-text">客服判断为“可对比，lose，同质化 lose”。同程划线价/到手价为 955.55/880.55；去哪儿同质化房型划线价/到手价为 1393/1105。</div>
+            </div>
+            <div class="case-block">
+              <div class="case-label">Agent 判断</div>
+              <div class="case-text">当前规则先判断划线价一致性：|1393 - 955.55| > 0.1，可以确认 Q 和 E 不是同一套货源/报价口径，不能继续用促销分桶解释价差。</div>
+            </div>
+            <div class="case-block">
+              <div class="case-label">输出</div>
+              <div class="case-text">当前 Demo 只能输出到“划线价不一致”。后续三级需要依赖系统数据继续区分：轮转 lose、底价 lose（E 独有货源）、会员兑 lose & 活包资源 lose；这些原因当前不能由 AI 单独判断。</div>
+            </div>
+            <div class="case-result">当前可判断：价格lose / 划线价不一致；三级原因待系统数据输入后再细分</div>
+          </div>
+        </div>
+      </div>
+    </details>
+  </section>
+
+  <div class="footer-bar">
+    <div class="footer-left">比价UPS AI运营</div>
+    <div class="footer-right">比价线索归因本地 Demo · 2026-07-02<br>本地流程已跑通 · 待信息自动化补齐</div>
+  </div>
+
+</div>
+</body>
+</html>
